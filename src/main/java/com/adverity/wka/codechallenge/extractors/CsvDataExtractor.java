@@ -35,9 +35,11 @@ class CsvDataExtractor implements DataExtractor {
             CsvMapper mapper = new CsvMapper();
             MappingIterator<Map<String, String>> rowsIterator = mapper.readerFor(Map.class).with(schema).readValues(inputStream);
             Iterable<Map<String, String>> iterable = () -> rowsIterator;
-            return StreamSupport.stream(iterable.spliterator(), false)
+            List<DataEntry> entries = StreamSupport.stream(iterable.spliterator(), false)
                     .map(CsvDataExtractor::convertToDataEntry)
                     .collect(Collectors.toList());
+            log.info("Total number of {} data entries extracted.", entries.size());
+            return entries;
         } catch (IOException e) {
             log.error("Error while reading csv file.", e);
         }
