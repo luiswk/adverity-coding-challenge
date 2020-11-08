@@ -1,0 +1,107 @@
+openapi: 3.0.1
+info:
+  title: Adverity code challenge
+  version: 1.0.0
+tags:
+  - name: dataEntry
+paths:
+  /data-entry/search:
+    post:
+      tags:
+        - dataEntry
+      summary: Search for data entries
+      operationId: search
+      requestBody:
+        description: Criteria to be used for searching
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEntrySearchCriteriaPO'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataEntrySearchItemPO'
+        400:
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    DataEntrySearchCriteriaPO:
+      type: object
+      properties:
+        fromDate:
+          type: string
+          format: date
+          description: From date (YYYY-MM-DD)
+        toDate:
+          type: string
+          format: date
+          description: To date (YYYY-MM-DD)
+        aggregateOn:
+          type: array
+          description: List of metrics to aggregate on
+          items:
+            type: string
+            enum:
+              - clicks
+              - impressions
+        groupBy:
+          type: array
+          description: List of dimensions to group by
+          items:
+            type: string
+            enum:
+              - datasource
+              - campaign
+        filterBy:
+          type: array
+          items:
+            $ref: '#/components/schemas/DimensionFilterPO'
+        pageNumber:
+          type: integer
+          format: int32
+          description: Page number
+        pageSize:
+          type: integer
+          format: int32
+          description: Page size
+    DimensionFilterPO:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+            - datasource
+            - campaign
+        values:
+          type: array
+          items:
+            type: string
+    DataEntrySearchItemPO:
+      type: object
+      properties:
+        datasource:
+          type: string
+          description: Datasource
+        campaign:
+          type: string
+          description: Campaign
+        daily:
+          type: string
+          format: date
+          description: Daily
+        clicks:
+          type: integer
+          format: int64
+          description: Clicks
+        impressions:
+          type: integer
+          format: int64
+          description: Impressions
